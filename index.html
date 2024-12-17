@@ -11,13 +11,21 @@
 </head>
 <body>
     <div id="app">
+        <div class="btns">
+            <div>
+                <span>分隔行: </span>
+                <el-input v-model="spaceRow" style="width: 100px" placeholder="分隔行" />
+            </div>
+            <el-button type="primary" @click="handleAdd">添加行</el-button>
+        </div>
         <table class="table" border="1px">
             <tr>
                 <th v-for="(item, i) in columns" :key="i" style="text-align: start;">{{ item.label }}</th>
             </tr>
             <tbody>
                 <tr v-for="(item, i) in data" :key="i">
-                    <td v-for="(col, _i) in columns" :key="_i">
+                    <div>{{ i }}</div>
+                    <td v-for="(col, _i) in columns" :key="_i" :class="{aff: i % spaceRow === spaceRow - 1}">
                         <div v-if="col.prop === 'a'">
                             <el-input v-model="data[i][col.prop]" style="width: 140px" :placeholder="col.label" />
                         </div>
@@ -49,19 +57,16 @@
                 </tr>
             </tbody>
         </table>
-        <div class="btns">
-            <el-button type="primary" @click="handleAdd">添加行</el-button>
-            <el-button type="success" @click="handleSave" v-if="showSave">保存本地</el-button>
-        </div>
+        
     </div>
     
     <script>
-        const { createApp, ref } = Vue
+        const { createApp, ref, watch, computed } = Vue
         const app = createApp({
             setup() {
                 const dd = localStorage.getItem('data')
                 const data = ref(dd ? JSON.parse(dd) : [{}])
-                const showSave = ref(false)
+                const spaceRow = ref(3)
                 const columns = ref([
                     { label: 'A账号', prop: 'a' },
                     { label: 'B账号', prop: 'b' },
@@ -84,23 +89,19 @@
                 }
                 const handleSave = () => {
                     localStorage.setItem('data', JSON.stringify(data.value))
-                    alert('保存成功')
                 }
-                const init = () => {
-                    const { protocol } = location
-                    if (['http:', 'https:'].includes(protocol)) {
-                        showSave.value = true
-                    }
-                }
-                init()
+                
+                // 自动保存
+                watch(data.value, () => {
+                    handleSave()
+                })
                 return {
                     data,
                     columns,
-                    showSave,
+                    spaceRow,
                     handleCopy,
                     handleDel,
                     handleAdd,
-                    handleSave
                 }
             }
         })

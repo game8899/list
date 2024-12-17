@@ -19,7 +19,11 @@ th, td {
     border-bottom: 1px solid #ddd;
     padding: 10px;
 }
+.aff {
+    border-bottom: 10px solid orange;
+}
 .btns {
-    text-align: right;
     padding: 16px;
+    display: flex;
+    justify-content: space-between;
 }
