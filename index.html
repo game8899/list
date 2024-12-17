@@ -28,26 +28,11 @@
                             <el-input v-model="data[i][col.prop]" style="width: 140px" :placeholder="col.label" />
                         </div>
                         <div v-else-if="col.prop === 'status'">
-                            <el-select
-                                v-model="data[i][col.prop]"
-                                :placeholder="col.label"
-                                style="width: 100px"
-                            >
-                                <el-option
-                                    v-for="item in [
-                                        { label: '成功', value: 1 },
-                                        { label: '失败', value: 2 },
-                                        { label: '待处理', value: 3 },
-                                    ]"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value"
-                                />
-                                </el-select>
-                            </el-select>
+                            <el-button v-if="!data[i][col.prop] || data[i][col.prop] === 1" type="success" size="small" @click="data[i][col.prop] = 1">成功</el-button>
+                            <el-button v-if="!data[i][col.prop] || data[i][col.prop] === 2" type="danger" size="small" @click="data[i][col.prop] = 2">失败</el-button>
                         </div>
                         <div v-else-if="col.prop === 'index'">
-                            {{ i + 1 }}
+                            {{ data.length - i }}
                         </div>
                         <div v-else-if="col.prop === 'ablance'">
                             <span>{{ item.a }} {{ item.blance }}</span>
@@ -66,6 +51,7 @@
         </table>
         <div class="btns">
             <el-button type="primary" @click="handleAdd">添加行</el-button>
+            <el-button type="success" @click="handleSave" v-if="showSave">保存本地</el-button>
         </div>
     </div>
     
@@ -73,7 +59,9 @@
         const { createApp, ref } = Vue
         const app = createApp({
             setup() {
-                const data = ref([{}])
+                const dd = localStorage.getItem('data')
+                const data = ref(dd ? JSON.parse(dd) : [{}])
+                const showSave = ref(false)
                 const columns = ref([
                     { label: 'A账号', prop: 'a' },
                     { label: 'B账号', prop: 'b' },
@@ -88,18 +76,31 @@
                     data.value.splice(i, 1)
                 }
                 const handleAdd = () => {
-                    data.value.push({})
+                    data.value.unshift({})
                 }
                 const handleCopy = (txt) => {
                     navigator.clipboard.writeText(txt)
                     alert('复制成功: ' + txt)
                 }
+                const handleSave = () => {
+                    localStorage.setItem('data', JSON.stringify(data.value))
+                    alert('保存成功')
+                }
+                const init = () => {
+                    const { protocol } = location
+                    if (['http:', 'https:'].includes(protocol)) {
+                        showSave.value = true
+                    }
+                }
+                init()
                 return {
                     data,
                     columns,
+                    showSave,
                     handleCopy,
                     handleDel,
-                    handleAdd
+                    handleAdd,
+                    handleSave
                 }
             }
         })
