@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+#app {
+    padding: 16px;
+}
+.flex {
+    display: flex;
+}
+table {
+    width: 100%;
+}
+table, th, td {
+    border: none;
+    
+}
+th, td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}
+.btns {
+    text-align: right;
+    padding: 16px;
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List</title>
+    <script src="./js/vue.js"></script>
+    <script src="./js/element-plus.js"></script>
+    <link rel="stylesheet" href="./css/element.css" />
+    <link rel="stylesheet" href="./css/index.css" />
+</head>
+<body>
+    <div id="app">
+        <table class="table" border="1px">
+            <tr>
+                <th v-for="(item, i) in columns" :key="i" style="text-align: start;">{{ item.label }}</th>
+            </tr>
+            <tbody>
+                <tr v-for="(item, i) in data" :key="i">
+                    <td v-for="(col, _i) in columns" :key="_i">
+                        <div v-if="col.prop === 'a'">
+                            <el-input v-model="data[i][col.prop]" style="width: 140px" :placeholder="col.label" />
+                        </div>
+                        <div v-else-if="col.prop === 'b'">
+                            <el-input v-model="data[i][col.prop]" style="width: 140px" :placeholder="col.label" />
+                        </div>
+                        <div v-else-if="col.prop === 'blance'">
+                            <el-input v-model="data[i][col.prop]" style="width: 140px" :placeholder="col.label" />
+                        </div>
+                        <div v-else-if="col.prop === 'status'">
+                            <el-select
+                                v-model="data[i][col.prop]"
+                                :placeholder="col.label"
+                                style="width: 100px"
+                            >
+                                <el-option
+                                    v-for="item in [
+                                        { label: '成功', value: 1 },
+                                        { label: '失败', value: 2 },
+                                        { label: '待处理', value: 3 },
+                                    ]"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                />
+                                </el-select>
+                            </el-select>
+                        </div>
+                        <div v-else-if="col.prop === 'index'">
+                            {{ i + 1 }}
+                        </div>
+                        <div v-else-if="col.prop === 'ablance'">
+                            <span>{{ item.a }} {{ item.blance }}</span>
+                            <el-button plain type="success" size="small" @click="handleCopy(`${item.a} ${item.blance}`)">复制</el-button>
+                        </div>
+                        <div v-else-if="col.prop === 'bblance'">
+                            <span>{{ item.b }} {{ item.blance }}</span>
+                            <el-button plain type="success" size="small" @click="handleCopy(`${item.b} ${item.blance}`)">复制</el-button>
+                        </div>
+                        <div v-else-if="col.prop === 'opt'">
+                            <el-button plain type="danger" size="small" @click="handleDel(i)">删除</el-button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="btns">
+            <el-button type="primary" @click="handleAdd">添加行</el-button>
+        </div>
+    </div>
+    
+    <script>
+        const { createApp, ref } = Vue
+        const app = createApp({
+            setup() {
+                const data = ref([{}])
+                const columns = ref([
+                    { label: 'A账号', prop: 'a' },
+                    { label: 'B账号', prop: 'b' },
+                    { label: '余额', prop: 'blance' },
+                    { label: '状态', prop: 'status' },
+                    { label: '序号', prop: 'index' },
+                    { label: 'A账号余额', prop: 'ablance' },
+                    { label: 'B账号余额', prop: 'bblance' },
+                    { label: '操作', prop: 'opt' },
+                ])
+                const handleDel = (i) => {
+                    data.value.splice(i, 1)
+                }
+                const handleAdd = () => {
+                    data.value.push({})
+                }
+                const handleCopy = (txt) => {
+                    navigator.clipboard.writeText(txt)
+                    alert('复制成功: ' + txt)
+                }
+                return {
+                    data,
+                    columns,
+                    handleCopy,
+                    handleDel,
+                    handleAdd
+                }
+            }
+        })
+        app.use(ElementPlus)
+        app.mount('#app')
+    </script>
+</body>
+</html>
