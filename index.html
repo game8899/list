@@ -47,11 +47,11 @@
                         </div>
                         <div v-else-if="col.prop === 'ablance'">
                             <span>{{ item.a }} {{ item.blance }}</span>
-                            <el-button plain type="success" size="small" @click="handleCopy(`${item.a} ${item.blance}`)">复制</el-button>
+                            <el-button plain type="success" size="small" @click="handleCopy(`${item.a || ''} ${item.blance || ''}`)">复制</el-button>
                         </div>
                         <div v-else-if="col.prop === 'bblance'">
                             <span>{{ item.b }} {{ item.blance }}</span>
-                            <el-button plain type="success" size="small" @click="handleCopy(`${item.b} ${item.blance}`)">复制</el-button>
+                            <el-button plain type="success" size="small" @click="handleCopy(`${item.b || ''} ${item.blance || ''}`)">复制</el-button>
                         </div>
                         <div v-else-if="col.prop === 'opt'">
                             <el-button plain type="danger" size="small" @click="handleDel(i)">删除</el-button>
