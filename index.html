@@ -62,23 +62,37 @@
             </tbody>
         </table>
         <el-card>
+            <el-select v-model="group" placeholder="Select" style="width: 240px">
+                <el-option
+                    v-for="(item, i) in groups"
+                    :key="i"
+                    :label="`分区${i + 1}`"
+                    :value="i"
+                />
+            </el-select>
             <div class="flex">
                 <div class="f-1">
                     A账号：
                     <div>
-                        <div v-for="(o, i) in data">{{ o.a }}</div>
+                        <div v-for="(o, i) in groupData">{{ o.a }}</div>
                     </div>
                 </div>
                 <div class="f-1">
                     B账号：
                     <div>
-                        <div v-for="(o, i) in data">{{ o.b }}</div>
+                        <div v-for="(o, i) in groupData">{{ o.b }}</div>
                     </div>
                 </div>
                 <div class="f-1">
-                    余额：
+                    A账号余额：
                     <div>
-                        <div v-for="(o, i) in data">{{ o.blance }}</div>
+                        <div v-for="(o, i) in groupData">{{ o.a }} {{ o.blance }}</div>
+                    </div>
+                </div>
+                <div class="f-1">
+                    B账号余额：
+                    <div>
+                        <div v-for="(o, i) in groupData">{{ o.b }} {{ o.blance }}</div>
                     </div>
                 </div>
             </div>
@@ -102,6 +116,26 @@
                     { label: 'B账号余额', prop: 'bblance' },
                     { label: '操作', prop: 'opt' },
                 ])
+                const group = ref(0)
+                const options = ref([])
+                const groups = computed(() => {
+                    const arr = []
+                    data.value.forEach((o, i) => {
+                        if (o.row) {
+                            arr[arr.length] = []
+                        } else {
+                            if (arr.length) {
+                                const group = arr[arr.length - 1]
+                                group.push(o)
+                                arr[arr.length - 1] = group
+                            } else {
+                                arr[0] = [o]
+                            }
+                        }
+                    })
+                    return arr
+                })
+                const groupData = computed(() => groups.value[group.value])
                 const handleDel = (i) => {
                     data.value.splice(i, 1)
                 }
@@ -141,6 +175,9 @@
                 return {
                     data,
                     columns,
+                    group,
+                    groups,
+                    groupData,
                     handleCopy,
                     handleDel,
                     handleAdd,
