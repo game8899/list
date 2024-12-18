@@ -65,6 +65,7 @@
     
     <script>
         const { createApp, ref, watch, computed } = Vue
+        const { ElMessage } = ElementPlus
         const app = createApp({
             setup() {
                 const dd = localStorage.getItem('data')
@@ -88,8 +89,24 @@
                     data.value.unshift({})
                 }
                 const handleCopy = (txt) => {
-                    navigator.clipboard.writeText(txt)
-                    alert('复制成功: ' + txt)
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(txt)
+                    } else {
+                        const textarea = document.createElement('textarea')
+                        document.body.appendChild(textarea)
+                        // 隐藏此输入框
+                        textarea.style.position = 'fixed'
+                        textarea.style.clip = 'rect(0 0 0 0)'
+                        // 赋值
+                        textarea.value = txt
+                        // 选中
+                        textarea.select()
+                        // 复制
+                        document.execCommand('copy', true)
+                        // 移除输入框
+                        document.body.removeChild(textarea)
+                    }
+                    ElMessage.success('复制成功: ' + txt)
                 }
                 const handleSave = () => {
                     localStorage.setItem('data', JSON.stringify(data.value))
