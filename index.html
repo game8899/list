@@ -12,13 +12,7 @@
 <body>
     <div id="app">
         <div class="btns">
-            <div>
-                <el-button type="success" @click="showRow = !showRow">{{ showRow ? '隐藏' : '显示' }}分隔行</el-button> &nbsp;
-                <template v-if="showRow">
-                    <span>分隔行: </span>
-                    <el-input v-model="spaceRow" style="width: 100px" placeholder="分隔行" />
-                </template>
-            </div>
+            <el-button type="success" @click="handleRow">分隔行</el-button> &nbsp;
             <el-button type="primary" @click="handleAdd">添加行</el-button>
         </div>
         <table class="table" border="1px">
@@ -27,40 +21,68 @@
             </tr>
             <tbody>
                 <tr v-for="(item, i) in data" :key="i">
-                    <div>{{ i }}</div>
-                    <td v-for="(col, _i) in columns" :key="_i" :class="{aff: showRow && (i % spaceRow === spaceRow - 1)}">
-                        <div v-if="col.prop === 'a'">
-                            <el-input v-model="data[i][col.prop]" style="width: 140px" :placeholder="col.label" />
-                        </div>
-                        <div v-else-if="col.prop === 'b'">
-                            <el-input v-model="data[i][col.prop]" style="width: 140px" :placeholder="col.label" />
-                        </div>
-                        <div v-else-if="col.prop === 'blance'">
-                            <el-input v-model="data[i][col.prop]" style="width: 140px" :placeholder="col.label" />
-                        </div>
-                        <div v-else-if="col.prop === 'status'">
-                            <el-button v-if="!data[i][col.prop] || data[i][col.prop] === 1" type="success" size="small" @click="data[i][col.prop] = 1">成功</el-button>
-                            <el-button v-if="!data[i][col.prop] || data[i][col.prop] === 2" type="danger" size="small" @click="data[i][col.prop] = 2">失败</el-button>
-                        </div>
-                        <div v-else-if="col.prop === 'index'">
-                            {{ data.length - i }}
-                        </div>
-                        <div v-else-if="col.prop === 'ablance'">
-                            <span>{{ item.a }} {{ item.blance }}</span>
-                            <el-button plain type="success" size="small" @click="handleCopy(`${item.a || ''} ${item.blance || ''}`)">复制</el-button>
-                        </div>
-                        <div v-else-if="col.prop === 'bblance'">
-                            <span>{{ item.b }} {{ item.blance }}</span>
-                            <el-button plain type="success" size="small" @click="handleCopy(`${item.b || ''} ${item.blance || ''}`)">复制</el-button>
-                        </div>
-                        <div v-else-if="col.prop === 'opt'">
-                            <el-button plain type="danger" size="small" @click="handleDel(i)">删除</el-button>
+                    <td v-for="(col, _i) in columns" :key="_i">
+                        <template v-if="item.row">
+                            <div class="pd10" v-if="col.prop === 'opt'">
+                                <el-button plain type="danger" size="small" @click="handleDel(i)">删除</el-button>
+                            </div>
+                            <div v-else class="aff"></div>
+                        </template>
+                        <div class="pd10" v-else>
+                            <div v-if="col.prop === 'a'">
+                                <el-input v-model="data[i][col.prop]" style="width: 140px" :placeholder="col.label" />
+                            </div>
+                            <div v-else-if="col.prop === 'b'">
+                                <el-input v-model="data[i][col.prop]" style="width: 140px" :placeholder="col.label" />
+                            </div>
+                            <div v-else-if="col.prop === 'blance'">
+                                <el-input v-model="data[i][col.prop]" style="width: 140px" :placeholder="col.label" />
+                            </div>
+                            <div v-else-if="col.prop === 'status'">
+                                <el-button v-if="!data[i][col.prop] || data[i][col.prop] === 1" type="success" size="small" @click="data[i][col.prop] = 1">成功</el-button>
+                                <el-button v-if="!data[i][col.prop] || data[i][col.prop] === 2" type="danger" size="small" @click="data[i][col.prop] = 2">失败</el-button>
+                            </div>
+                            <div v-else-if="col.prop === 'index'">
+                                {{ data.length - i }}
+                            </div>
+                            <div v-else-if="col.prop === 'ablance'">
+                                <span>{{ item.a }} {{ item.blance }}</span>
+                                <el-button plain type="success" size="small" @click="handleCopy(`${item.a || ''} ${item.blance || ''}`)">复制</el-button>
+                            </div>
+                            <div v-else-if="col.prop === 'bblance'">
+                                <span>{{ item.b }} {{ item.blance }}</span>
+                                <el-button plain type="success" size="small" @click="handleCopy(`${item.b || ''} ${item.blance || ''}`)">复制</el-button>
+                            </div>
+                            <div v-else-if="col.prop === 'opt'">
+                                <el-button plain type="danger" size="small" @click="handleDel(i)">删除</el-button>
+                            </div>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
-        
+        <el-card>
+            <div class="flex">
+                <div class="f-1">
+                    A账号：
+                    <div>
+                        <div v-for="(o, i) in data">{{ o.a }}</div>
+                    </div>
+                </div>
+                <div class="f-1">
+                    B账号：
+                    <div>
+                        <div v-for="(o, i) in data">{{ o.b }}</div>
+                    </div>
+                </div>
+                <div class="f-1">
+                    余额：
+                    <div>
+                        <div v-for="(o, i) in data">{{ o.blance }}</div>
+                    </div>
+                </div>
+            </div>
+        </el-card>
     </div>
     
     <script>
@@ -70,8 +92,6 @@
             setup() {
                 const dd = localStorage.getItem('data')
                 const data = ref(dd ? JSON.parse(dd) : [{}])
-                const spaceRow = ref(3)
-                const showRow = ref(false)
                 const columns = ref([
                     { label: 'A账号', prop: 'a' },
                     { label: 'B账号', prop: 'b' },
@@ -111,7 +131,9 @@
                 const handleSave = () => {
                     localStorage.setItem('data', JSON.stringify(data.value))
                 }
-                
+                const handleRow = () => {
+                    data.value.unshift({ row: 1 })
+                }
                 // 自动保存
                 watch(data.value, () => {
                     handleSave()
@@ -119,11 +141,10 @@
                 return {
                     data,
                     columns,
-                    spaceRow,
-                    showRow,
                     handleCopy,
                     handleDel,
                     handleAdd,
+                    handleRow
                 }
             }
         })

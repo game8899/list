@@ -17,7 +17,6 @@ table, th, td {
 }
 th, td {
     border-bottom: 1px solid #ddd;
-    padding: 10px;
 }
 .aff {
     border-bottom: 4px dashed orange;
@@ -26,4 +25,13 @@ th, td {
     padding: 16px;
     display: flex;
     justify-content: space-between;
+}
+.pd10 {
+    padding: 10px;
+}
+.flex {
+    display: flex;
+}
+.f-1 {
+    flex: 1
 }
