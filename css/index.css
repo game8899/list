@@ -20,7 +20,7 @@ th, td {
     padding: 10px;
 }
 .aff {
-    border-bottom: 10px solid orange;
+    border-bottom: 4px dashed orange;
 }
 .btns {
     padding: 16px;
