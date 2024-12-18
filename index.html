@@ -56,20 +56,15 @@
                             <div v-else-if="col.prop === 'opt'">
                                 <el-button plain type="danger" size="small" @click="handleDel(i)">删除</el-button>
                             </div>
+                            <div v-else-if="col.check">
+                                <el-checkbox v-if="!data[i - 1] || data[i - 1].row" v-model="data[i][col.prop]" @change="handleCheckCange(i)" />
+                            </div>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
         <el-card>
-            <el-select v-model="group" placeholder="Select" style="width: 240px">
-                <el-option
-                    v-for="(item, i) in groups"
-                    :key="i"
-                    :label="`分区${i + 1}`"
-                    :value="i"
-                />
-            </el-select>
             <div class="flex">
                 <div class="f-1">
                     A账号：
@@ -107,6 +102,7 @@
                 const dd = localStorage.getItem('data')
                 const data = ref(dd ? JSON.parse(dd) : [{}])
                 const columns = ref([
+                    { label: '分区', check: true, prop: 'check' },
                     { label: 'A账号', prop: 'a' },
                     { label: 'B账号', prop: 'b' },
                     { label: '余额', prop: 'blance' },
@@ -116,26 +112,18 @@
                     { label: 'B账号余额', prop: 'bblance' },
                     { label: '操作', prop: 'opt' },
                 ])
-                const group = ref(0)
-                const options = ref([])
-                const groups = computed(() => {
+                const index = ref(0)
+                const groupData = computed(() => {
+                    const i = index.value
                     const arr = []
-                    data.value.forEach((o, i) => {
-                        if (o.row) {
-                            arr[arr.length] = []
-                        } else {
-                            if (arr.length) {
-                                const group = arr[arr.length - 1]
-                                group.push(o)
-                                arr[arr.length - 1] = group
-                            } else {
-                                arr[0] = [o]
-                            }
+                    for(const [k, o] of Object.entries(data.value)) {
+                        if (k >= i) {
+                            if (o.row) break
+                            arr.push(o)
                         }
-                    })
+                    }
                     return arr
                 })
-                const groupData = computed(() => groups.value[group.value])
                 const handleDel = (i) => {
                     data.value.splice(i, 1)
                 }
@@ -168,6 +156,16 @@
                 const handleRow = () => {
                     data.value.unshift({ row: 1 })
                 }
+                const handleCheckCange = (i) => {
+                    if (data.value[i]?.check) {
+                        index.value = i
+                        for(const [h] of Object.entries(data.value)) {
+                            if (h != i) {
+                                data.value[h].check = false
+                            }
+                        }
+                    }
+                }
                 // 自动保存
                 watch(data.value, () => {
                     handleSave()
@@ -175,13 +173,12 @@
                 return {
                     data,
                     columns,
-                    group,
-                    groups,
                     groupData,
                     handleCopy,
                     handleDel,
                     handleAdd,
-                    handleRow
+                    handleRow,
+                    handleCheckCange
                 }
             }
         })
