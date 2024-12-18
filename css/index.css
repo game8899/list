@@ -2,11 +2,20 @@
     margin: 0;
     padding: 0;
 }
+html, body {
+    height: 100%;
+}
 #app {
-    padding: 16px;
+    height: 100%;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
 }
 .flex {
     display: flex;
+}
+.content {
+    overflow-y: auto;
 }
 table {
     width: 100%;
@@ -34,4 +43,8 @@ th, td {
 }
 .f-1 {
     flex: 1
+}
+.card {
+    max-height: 30vh;
+    overflow-y: auto;
 }
